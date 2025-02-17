@@ -48,9 +48,15 @@
     
     \item Implementa el programa Determinante concurrente de forma secuencial.
 
+    El programa DCsecuencial.java calcula el determinante de una matriz 3x3 de manera secuencial utilizando la regla de Sarrus, esta regla establece un método          directo para calcular el determinante de matrices 3x3 sumando y restando productos de elementos específicos de la matriz. El programa define una matriz de          prueba y luego ejecuta una función que aplica la regla de Sarrus sobre ella, además, se mide el tiempo de ejecución utilizando System.nanoTime(), al final, 
+      el programa imprime el tiempo de ejecución en nanosegundos y el valor calculado del determinante, este enfoque no involucra concurrencia, ya que todo el 
+      cálculo se realiza de forma secuencial en un solo hilo.
+
     \hfill
     
     \item Implementa del programa Determinante concurrente para dos hilos (en vez de seis).
+
+    El programa DCdosHilos.java calcula el determinante de una matriz 3x3 de manera concurrente utilizando dos hilos, la matriz de prueba se divide en dos partes      para que cada hilo se encargue de calcular una sección del determinante utilizando la regla de Sarrus, el primer hilo se encarga de calcular los tres términos     positivos de la regla, mientras que el segundo hilo calcula los tres términos negativos. Ambos hilos se inician de forma simultánea y luego se espera a que        ambos terminen utilizando join(). Al finalizar, los resultados parciales calculados por cada hilo se suman para obtener el determinante total, el programa         también mide el tiempo de ejecución en nanosegundos y lo imprime junto con el resultado calculado, esta implementación busca mejorar el tiempo de cálculo          dividiendo el trabajo en dos hilos, a diferencia del enfoque secuencial.
 
     \hfill
 
