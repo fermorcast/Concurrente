@@ -56,6 +56,23 @@
 
     \item Compara las 3 implementaciones: el programa Determinante concurrente para dos hilos, para seis hilos y el programa secuencial. Responde: ¿A qué se debe el orden en el que se ordenan los tiempos de ejecución de cada programa?
 
+    \begin{itemize}
+        \item \textbf{Secuencial:} 1500 ns
+        \item \textbf{Dos hilos:} 408600 ns
+        \item \textbf{Seis hilos:} 680100 ns
+    \end{itemize}
+
+    \begin{itemize}
+        \item \textbf{Secuencial (1500 ns):} El tiempo de ejecución del programa secuencial es el más bajo porque realiza todos los cálculos en un solo hilo, sin            ningún tipo de paralelización ni sobrecarga de gestión de hilos, en este caso, el programa es sencillo y directo, no es necesario crear, gestionar o                sincronizar hilos, entonces, gracias a la pequeña cantidad de operaciones, el tiempo es mínimo.
+    
+        \item \textbf{Dos hilos (408600 ns):} El uso de dos hilos mejora la paralelización, pero no necesariamente mejora el tiempo de ejecución, en este caso, la           creación de los hilos y la sincronización entre ellos da paso a una sobrecarga que aumenta el tiempo de ejecución en comparación con la implementación              secuencial, aunque se distribuye el cálculo de los términos del determinante entre dos hilos, la sobrecarga asociada con la creación de los hilos y la              espera de su finalización (sincronización) supera las ventajas de la paralelización, por lo que, se tiene un mayor tiempo de ejecución.
+    
+        \item \textbf{Seis hilos (680100 ns):} A pesar de que más hilos teóricamente podrían dividir la carga de trabajo, en este caso, la implementación con seis           hilos tiene el mayor tiempo de ejecución por la gran sobrecarga en la gestión de hilos. Con seis hilos, el sistema debe crear, gestionar y sincronizar un           mayor número de hilos, como consecuencia, tarda más y rinde menos. Este tipo de paralelización se vuelve ineficiente cuando el problema es demasiado                pequeño, ya que la sobrecarga de los hilos supera el tiempo de cálculo real.
+\end{itemize}
+
+Tomando en cuenta los argumentos anteriores, decimos que a pesar de que la paralelización con más hilos teóricamente podría mejorar el rendimiento, la sobrecarga asociada con la creación y sincronización de hilos es mucho más costosa en términos de tiempo cuando se trabaja con tareas pequeñas y simples, en este caso, el cálculo del determinante de una matriz 3x3. Por lo tanto, el programa secuencial es el más eficiente en este caso, seguido por el uso de dos hilos, y finalmente el de seis hilos, que presenta la mayor sobrecarga.
+
+
     \hfill    
     
     \item Si utilizas la Ley de Amdahl entre el programa Determinante concurrente para dos hilos y el programa secuencial. ¿El resultado es mayor o menor a 1? ¿Por qué?
