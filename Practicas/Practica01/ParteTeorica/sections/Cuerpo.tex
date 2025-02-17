@@ -30,8 +30,12 @@
 
     Con base a la ejecución de Runtime.getRuntime().availableProcessors() para cada computadora:
 
-    Computadora de Fernanda: 4
-
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{resources/Ej2.png}
+        \caption{Computadora de Fernanda: 4}
+    \end{figure}
+    
     Computadora de Huriel: 12
 
     Computadora de Hugo: 12
@@ -40,9 +44,20 @@
     
     \item Revisa el programa Determinante concurrente y responde ¿Cuánto tiempo tarda en ejecutarse?
 
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{resources/Ej3.png}
+    \end{figure}
+
     \hfill    
 
     \item El programa Determinante concurrente está implementado extendiendo la clase Thread. Implementa el programa utilizando la interfaz Runnable.
+    El programa DeterminanteConcurrenteRunnable.java usa runnable lo cual es más flexible y evitamos la herencia de Thread, hacemos los mismos cálculos para obtener el determinante de una matriz y mostramos el cálculo de toda la determinante al final.
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.8\textwidth]{resources/Ej4.png}
+    \end{figure}
 
     \hfill
     
@@ -97,6 +112,7 @@ Tomando en cuenta los argumentos anteriores, decimos que a pesar de que la paral
     
     En caso de que deseemos realizar un programa análogo a Determinante Concurrente sin un método de funcionamiento similar a nuestro método join(), tenemos el problema de que al estar trabajando con operaciones ejecutadas en modo concurrente, no haya un lapso de espera necesario para calcular todas las operaciones necesarias para otorgar el producto de matrices correcto, por lo cual siempre se necesitará de alguna ''espera'' para que todos los hilos terminen antes de concluir nuestra ejecución.
 
+    El método join es clave en la sincronización de hilos, porque nos asegura que todos terminen antes de continuar. Sin él, se corre el riesgo de acceder a datos inconsistentes o incompletos, haciendo que el resultado pueda ser incorrecto.
     \hfill
     
 \end{enumerate}
