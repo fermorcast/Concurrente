@@ -1,0 +1,77 @@
+\section*{Instrucciones:}
+
+\begin{itemize}
+    \item Entrega en un pdf las respuestas de los ejercicios que no requieran implementarse y añade una breve descripción de los programas que entregas (sus nombres y qué hacen).
+    
+    \item Los programas deben ir un zip. Debes realizar un programa en cada ejercicio que indique “Implemetar”.
+
+    \item Recuerda que debes utilizar Java 21 LTS.
+
+    \item \textbf{Si no compila utilizando Java 21LTS o si no se entrega la breve descripción de los
+    programas se penalizará.}
+\end{itemize}
+
+\textbf{Tiempo de elaboración:} $\approx$ 1.5 hrs
+
+\textbf{Total de puntos:} 100
+
+\section*{Ejercicios:}
+
+\begin{enumerate}
+    \item Lee lo siguiente \href{https://www.evanjones.ca/software/threading-linus-msg.html}{https://www.evanjones.ca/software/threading-linus-msg.html} y comparte en máximo 4 líneas de computadora a que se refiere Linus Torvalds con un contexto de ejecución y cómo se relaciona con la definición en la sección 1 de esta práctica.
+
+    \hfill
+    
+    \item  ¿Cuántos hilos tiene disponibles tu computadora?
+    
+    \textit{Ejecuta Runtime.getRuntime().availableProcessors(), si son más de uno en el equipo escriban el de cada uno.}
+
+    Con base a la ejecución de Runtime.getRuntime().availableProcessors() para cada computadora:
+
+    Computadora de Fernanda:
+
+    Computadora de Huriel:
+
+    Computadora de Hugo:
+
+    \hfill
+    
+    \item Revisa el programa Determinante concurrente y responde ¿Cuánto tiempo tarda en ejecutarse?
+
+    \hfill    
+
+    \item El programa Determinante concurrente está implementado extendiendo la clase Thread. Implementa el programa utilizando la interfaz Runnable.
+
+    \hfill
+    
+    \item Implementa el programa Determinante concurrente de forma secuencial.
+
+    \hfill
+    
+    \item Implementa del programa Determinante concurrente para dos hilos (en vez de seis).
+
+    \hfill
+
+    \item Compara las 3 implementaciones: el programa Determinante concurrente para dos hilos, para seis hilos y el programa secuencial. Responde: ¿A qué se debe el orden en el que se ordenan los tiempos de ejecución de cada programa?
+
+    \hfill    
+    
+    \item Si utilizas la Ley de Amdahl entre el programa Determinante concurrente para dos hilos y el programa secuencial. ¿El resultado es mayor o menor a 1? ¿Por qué?
+
+    Recordando nuestra fórmula de la ley de Amdahl:
+
+    \[ S = \frac{1}{1-p + \frac{p}{n}}\]
+
+    Interpretando esta misma, recordemos que nuestro resultado va a ser dependiente a la cantidad de trabajo paralelizable y a la cantidad de hilos a los cuales les podamos distribuir trabajo paralelizable, sabemos que en ambos programas mencionados en la descripción del ejercicio, la cantidad de hilos es 2 ($n=2$) y 1 ($n=1$) respectivamente.
+
+    \hfill    
+    
+    \item Describe con tus propias palabras en máximo dos líneas para qué sirve el método join(). Si no utilizas el método join() en Determinante Concurrente, ¿sigue funcionando?
+
+    La función principal del método join() es permitir que los hilos terminen de ejecutar sus tareas asignadas sin el riesgo de que el main deje de operar y así poder obtener el producto de nuestras matrices de forma segura.
+    
+    En caso de que deseemos realizar un programa análogo a Determinante Concurrente sin un método de funcionamiento similar a nuestro método join(), tenemos el problema de que al estar trabajando comn operaciones ejecutadas en modo concurrente, no haya un lapso de espera necesario para calcular todas las operaciones necesarias para otorgar el producto de matrices correcto, por lo cual siempre se necesitará de alguna ''espera'' para que todos los hilos terminen antes de concluir nuestra ejecución.
+
+    \hfill
+    
+\end{enumerate}
