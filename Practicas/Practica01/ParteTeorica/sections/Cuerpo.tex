@@ -107,7 +107,7 @@ Tomando en cuenta los argumentos anteriores, decimos que a pesar de que la paral
     Vamos a calcular la Ley de Amdahl en base a nuestros resultados, donde obtuvimos que DeterminanteConcurrente tardó 1,949,855 ns y el secuencial sólo 6,961 ns, con lo cuál
     podemos ver el speedup de la Ley de Amdahl:
 
-    \[S = \frac{T_s}{T_p}=\frac{6961}{1949855}=0.00357\]
+    \[S = \frac{T_s}{T_p}=\frac{6961}{728270}=0.0095582\]
 
     Por lo que el speedu es menor a 1, lo cual significa que la versión concurrente es mucho peor o es más lenta que la secuencial, el por qué de esto es porque tenemos en el concurrente la creación de 6 hilos, por lo que esto es un proceso el cual a la computadora le lleva su tiempo hacerlo. Ahora, si vemos el secuencial, este tiene unas operaciones sobre una matriz de 3x3 que no representan gran costo computacional, en este caso entonces la creación de hilos sí es significativa para nuestro programa.
     Al final, también tenemos la gestión del join, el cual también representa un costo que a este nivel sí es significativo.
@@ -119,12 +119,12 @@ Tomando en cuenta los argumentos anteriores, decimos que a pesar de que la paral
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=0.8\textwidth]{resources/Ej8_4.png.png}
+        \includegraphics[width=0.8\textwidth]{resources/Ej8_4.png}
     \end{figure}
 
     \begin{figure}[h]
         \centering
-        \includegraphics[width=0.8\textwidth]{resources/Ej8_5.png.png}
+        \includegraphics[width=0.8\textwidth]{resources/Ej8_5.png}
     \end{figure}
 
     \hfill    
