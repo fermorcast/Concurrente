@@ -52,6 +52,12 @@ Si existe una ejecución así toma una captura pantalla del resultado de tu prog
 \item  Utiliza candados y/o synchronized en tu implementación de forma que los métodos enq() y deq() sean una sola sección crítica y contesta: ¿existen inconsistencias?
 Importante: El orden en el que se suben las tareas con submit y se guardan en los futures, no es el orden en el que se realizan, solo es el orden en el que se les asignan a los hilos. Nuestro sistema es asíncrono, es decir, cada hilo puede tardarse más o menos en ejecutar la tarea que se le asignó.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{resources/Ejercicio4.png}
+\end{figure}
+
+Podemos ver que no hay inconsistencias, ya que hay locks en la sección crítica donde esto puedo fallar, en especifico el uso de lock()  y unlock() aseguran que un hilo a la vez pueda modificar la cola.
 \hfill
 
 \item En una pool de hilos (ExecutorService), ¿si utilizamos más hilos equivale a un mayor throughput?
