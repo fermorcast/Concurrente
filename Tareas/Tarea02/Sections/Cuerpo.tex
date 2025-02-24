@@ -22,16 +22,52 @@ ser evaluadas sobre 8.
 
     \begin{enumerate}
         \item La inflación sube año con año
+
+        \textbf{Tipo:} Propiedad de seguridad
+        
+        \textbf{Cosa mala que nunca sucede:} La inflación no parará de subir año con año.
+
+        \hfill
         
         \item Si Bob quiere entrar al patio a dejar comida eventualmente entrará
+
+        \textbf{Tipo:} Propiedad de viveza
+    
+        \textbf{Cosa buena que sucederá:} Bob logrará entrar al patio para dejar comida en algún momento.
+
+        \hfill
         
         \item Cada historia concurrente de esta implementación se puede transformar siempre a una implementación secuencial correcta
+
+         \textbf{Tipo:} Propiedad de seguridad
+         
+         \textbf{Cosa mala que nunca sucede:} Nunca habrá una historia concurrente que no pueda ser transformada a una implementación secuencial correcta.
+
+         \hfill
         
         \item El candado se liberará en algún momento
 
+        \textbf{Tipo:} Propiedad de viveza
+        
+        \textbf{Cosa buena que sucederá:} El candado será eventualmente liberado.
+
+        \hfill
+
         \item El retraso de un proceso detendrá a otros eventualmente.
 
+         \textbf{Tipo:} Propiedad de viveza
+         
+         \textbf{Cosa buena que sucederá:} Los otros procesos se detendrán en algún momento debido al retraso de un proceso.
+
+         \hfill
+
         \item El retraso de un proceso nunca detiene a otros.
+
+        \textbf{Tipo:} Propiedad de seguridad
+        
+        \textbf{Cosa mala que nunca sucede:} Nunca ocurrirá que el retraso de un proceso detenga a otros procesos.
+
+        \hfill
 
     \end{enumerate}
 
@@ -55,8 +91,80 @@ ser evaluadas sobre 8.
     \textit{Hint: Si no lo cumple, describe un ejemplo de una ejecución. Si lo cumple, encuentra la invariante y justifica el porqué}
 
     \begin{center}
-            \includegraphics[width = 12 cm]{images/Figure1_tarea2.png}
+            \includegraphics[width = 12 cm]{Images/Figure1_tarea2.png}
     \end{center}
+
+    \hfill
+
+    Desglosando las propiedades punto por punto:
+
+    \textbf{Exclusión Mutua}\\
+
+    Para probar esto, podemos probarlo por contradicción, suponiendo que no se cumple, decimos que $A$ y $B$ pueden entrar a la $CS$ al mismo tiempo.
+
+    Vamos a ver la ejecución de $A$ y la de $B$ en la que suponemos que ambos pasan a las CS.
+
+    Empezamos a ejecutar para A\\
+    \begin{equation}
+        \begin{split}
+        victim &= A\\
+        busy &= false\textbf{ (read)}\\
+        busy &= true\\
+        \end{split}
+    \end{equation}
+
+    Empezamos a ejecutar para B\\
+    \begin{equation}
+        \begin{split}
+         victim &= B\\
+         A \to CS   \text{   A entra a la CS}\\
+         busy = false \textbf{(read) !}\\
+         busy = true\\
+         victim = A !\\
+        B \to CS\\
+        \end{split}
+    \end{equation}
+
+    Como podemos ver, notamos dos contradicciones, pero la primera que notamos basta para saber que cumple con la propiedad de Exclusión Mutua.
+
+    Ya que al empezar $B$ a ejecutarse lee a \texttt{busy} como \texttt{false} cuando debería de ser \texttt{true}. La línea 10 nos asegura que solo el hilo víctima es el que podrá entrar al candado.
+
+    $\therefore$ Se cumple la exclusión mutua.
+
+    \hfill
+
+    \textbf{Deadlock-free}
+
+    Partiendo por contradicción, suponemos que no se cumple, es decir, esto implica que si se bloquean entre sí.
+
+    Empezamos a ejecutar para A\\
+    \begin{equation}
+    \setcounter{equation}{1}
+        \begin{split}
+         victim &= A\\
+        busy &= false \textbf{(A read)}\\
+         busy &= true \textbf{(A writes) }\\
+    \end{split}
+    \end{equation}
+    
+    Empezamos a ejecutar para B\\
+    \begin{equation}
+        \begin{split}
+         victim &= B
+    \end{split}
+    \end{equation}
+    
+    Podemos ver que todo esto se va a repetir para $A$ desde el principio, ya que esto se va a hacer mientras $A$ sea la víctima. Entonces, se queda en el ciclo. Ahora, para $B$, empezamos a decir que $B$ es la víctima, pero tenemos que $busy = true$, por lo que de igual forma se quedará atorado en el ciclo. $A$ y $B$ se quedarán atorados en el bucle.
+    
+    No pudimos encontrar una contradicción, por lo tanto no cumple con ser Deadlock-Free.
+
+    \hfill
+    
+    \textbf {Starvation-free}
+    
+    Tomando en cuenta una propiedad vista en clase, sabemos que todo algoritmo que no cumple con ser Deadlock free, este mismo no puede ser Starvation free, como nuestro algoritmo no es libre de Deadlocks, cumple con el tampoco ser libre de Starvations. 
+    
+    $\therefore$ No cumple Starvation-Free.
 
     \hfill
 
@@ -103,7 +211,7 @@ ser evaluadas sobre 8.
     \textit{Si no cumple con alguna propiedad, muestra una ejecución que lo justifique}
 
     \begin{center}
-            \includegraphics[width = 12 cm]{images/Figure2_tarea2.png}
+            \includegraphics[width = 12 cm]{Images/Figure2_tarea2.png}
     \end{center}
     
 \end{enumerate}
