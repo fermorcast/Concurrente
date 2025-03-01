@@ -1,0 +1,48 @@
+\input{docUI/Colors}
+\input{docUI/Commandos}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{Bisque},   
+    commentstyle=\color{Negro},
+    keywordstyle=\color{Rosa},
+    numberstyle=\tiny\color{Purpura},
+    stringstyle=\color{Amarillo},
+    basicstyle=\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=none,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=4
+}
+
+% Encabezados y pies de página
+
+% Diseño <<fancy>>
+\fancyhf{}
+
+% Encabezado
+\lhead[]{ % izquierda
+    \begin{tabular}{c c}
+        \includegraphics[height=.25in]{resources/Logo_FC_B.png} & {\color{Borde10}Facultad de Ciencias UNAM} \\
+    \end{tabular}
+}
+
+\rhead[]{ % derecha
+    \begin{tabular}{c c}
+        {\color{Borde16}\textit{\Materia}} & \includegraphics[height=.25in]{resources/Logo_UNAM_B.png} \\
+    \end{tabular}
+}
+%Pie de página
+
+\cfoot[]{ % center
+    {\color{Comentario}
+    \begin{tabular}{c c c}
+        $\boldsymbol{-}$ & \thepage & $\boldsymbol{-}$
+    \end{tabular}
+  }
+}
