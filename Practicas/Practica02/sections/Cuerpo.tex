@@ -43,7 +43,215 @@ Si existe una ejecución así toma una captura pantalla del resultado de tu prog
 
 \hfill
 
-\textbf{Importante:} El orden en el que se suben las tareas con submit y se guardan en los futures, no es el orden en el que se realizan, solo es el orden en el que se les asignan a los hilos. Nuestro sistema es asíncrono, es decir, cada hilo puede tardarse más o menos en ejecutar la tarea que se le asignó.
+\textbf{Importante:} El orden en el que se suben las tareas con submit y se guardan en los futures, no es el orden en el que se realizan, solo es el orden en el que se les asignan a los hilos. Nuestro sistema es asíncrono, es decir, cada hilo puede tardarse más o menos en ejecutar la tarea que se le asignó.\\
+
+\begin{itemize}
+    \item Secuencia 1:
+
+    Se hace enq(a), enq(b) y luego deq(), al final ambos elementos a y b deben estar en la cola.
+
+    \begin{verbatim}
+// secuencia 1
+public static void main(String[] args) throws InterruptedException, 
+ ExecutionException {
+    int n_hilos = 4;
+    ColaConcurrente2 queue = new ColaConcurrente2(n_hilos);
+        
+    ExecutorService executor = Executors.newFixedThreadPool(n_hilos);
+        
+    Future<?> future1 = executor.submit(() -> queue.enq("a"));
+    future1.get();  // Esperamos a que termine de encolar "a"
+        
+    Future<?> future2 = executor.submit(() -> queue.enq("b"));
+    future2.get();  // Esperamos a que termine de encolar "b"
+        
+    Future<?> future3 = executor.submit(() -> queue.deq());
+    future3.get();  // Esperamos a que termine de desencolar "a"
+        
+    // Se imprime la cola para ver el estado después de las operaciones
+    queue.print();  // Debe imprimir "b"
+
+    executor.shutdown();  // Cierra el executor
+    }
+    \end{verbatim}
+
+    El resultado esperado es:
+    \begin{verbatim}
+        Enqueued: a
+        Enqueued: b
+        Dequeued: a
+        Printing queue
+        b
+    \end{verbatim}
+
+    Y se obtuvo:
+    \begin{verbatim}
+    Enqueued: a
+    Enqueued: b
+    Dequeued: a
+    Printing queue
+    b
+    \end{verbatim}  
+
+    El resultado obtenido fue lo que esperábamos para la primera secuencia, esto indica que la implementación funciona correctamente para esta secuencia de operaciones:
+
+    enq(a): Se encola correctamente el elemento a.
+
+    enq(b): Se encola correctamente el elemento b.
+
+    deq(): Se desencola correctamente el elemento a.
+
+    print(): Se imprime correctamente el contenido de la cola, mostrando solo b.
+
+    \item Secuencia 2: 
+
+    enq(a): Se encola el elemento a.
+
+    enq(b): Se encola el elemento b.
+
+    deq(): Se desencola un elemento (debería desencolar a).
+
+    deq(): Se desencola otro elemento (debería desencolar b).
+
+    \begin{verbatim}
+        // secuencia 2
+    public static void main(String[] args) throws InterruptedException, 
+    ExecutionException {
+        int n_hilos = 4;
+        ColaConcurrente2 queue = new ColaConcurrente2(n_hilos);
+
+        Future<?> future1 = queue.enq("a");
+        Future<?> future2 = queue.enq("b");
+        future1.get(); // Espera a que se termine la primera tarea
+        future2.get(); // Espera a que se termine la segunda tarea
+
+        Future<?> future3 = queue.deq(); // Desencola el primer elemento
+        future3.get();
+
+        Future<?> future4 = queue.deq(); // Desencola el segundo elemento
+        future4.get();
+
+        // Imprime el estado final de la cola
+        Future<?> future5 = queue.print();
+        future5.get();
+    }
+    \end{verbatim}
+
+    El resultado esperado es:
+    \begin{verbatim}
+    Enqueued: a
+    Enqueued: b
+    Dequeued: a
+    Dequeued: b
+    Printing queue
+    \end{verbatim}
+
+    Y el resultado obtenido fue:
+    \begin{verbatim}
+    Enqueued: b
+    Enqueued: a
+    Dequeued: b
+    Dequeued: a
+    Printing queue
+    \end{verbatim}
+
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm, height=7cm]{2 - sec 2.png}
+\end{figure}
+
+    El resultado obtenido muestra que las operaciones se ejecutaron en el orden contrario al esperado. 
+    
+    Es decir, se encolaron primero b y luego a.
+
+    Se desencolaron b y luego a, en lugar de a y luego b.
+
+    Esto es debido a que las tareas están siendo ejecutadas de manera asincrónica por los hilos del ExecutorService, y el orden de ejecución de las tareas no está garantizado, aunque las enviamos en un orden específico con submit.
+
+    El problema es que las tareas de encolado (enq(a) y enq(b)) son asignadas a los hilos en el orden en que se ejecutan, pero eso no garantiza que se completen en el mismo orden. Como los hilos pueden ejecutarse de manera no secuencial, el resultado puede variar.
+
+    Entonces, enq(a) puede ser ejecutada después de enq(b), esto provoca que b se encole primero y luego a. Para el desencolado, los hilos pueden procesar las tareas de desencolado en cualquier orden
+
+    \item Secuencia 3:
+
+    operaciones en la cola:
+
+    enq(a)
+
+    enq(b)
+
+    deq() (Esto debe desencolar el primer elemento, que es a)
+
+    deq() (Esto debe desencolar el siguiente elemento, que es b)
+
+    deq() (Esta operación debería indicar que la cola está vacía)
+
+    \begin{verbatim}
+    // Secuencia 3
+public static void main(String[] args) {
+    int n_hilos = 4;
+    ColaConcurrente2 queue = new ColaConcurrente2(n_hilos);
+    try {
+         Future<?> f1 = Executors.newSingleThreadExecutor().submit(() -> 
+         queue.enq("a"));
+         Future<?> f2 = Executors.newSingleThreadExecutor().submit(() -> 
+         queue.enq("b"));
+         f1.get(); // Espera a que termine la tarea de encolar "a"
+         f2.get(); // Espera a que termine la tarea de encolar "b"
+            
+         Future<?> f3 = Executors.newSingleThreadExecutor().submit(() -> 
+         queue.deq());
+            f3.get(); // Espera a que termine la tarea de desencolar el primer 
+            elemento
+
+            Future<?> f4 = Executors.newSingleThreadExecutor().submit(() -> 
+            queue.deq());
+            f4.get(); 
+            // Espera a que termine la tarea de desencolar el siguiente elemento
+
+            Future<?> f5 = Executors.newSingleThreadExecutor().submit(() -> 
+            queue.deq());
+            f5.get(); 
+            // Espera a que termine la tarea de desencolar el último elemento
+
+            queue.print(); // Imprime la cola al final
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+    \end{verbatim}
+
+    El resultado esperado es:
+    \begin{verbatim}
+    Enqueued: a
+    Enqueued: b
+    Dequeued: a
+    Dequeued: b
+    Queue is empty
+    Printing queue
+    \end{verbatim}
+
+    Y el resultado obtenido fue:
+    \begin{verbatim}
+    Enqueued: b
+    Dequeued: tnull
+    Printing queue
+    Dequeued: a
+    Dequeued: b
+    Enqueued: a
+    a
+    \end{verbatim}
+
+    \begin{figure}[h]
+    \centering
+    \includegraphics[width=8cm, height=7cm]{2 - sec 3.png}
+\end{figure}
+    Dequeued: tnull nos indica que la cola está manejando incorrectamente el nodo tnull (el nodo final), esto podría ser un problema en la lógica que maneja los nodos en la cola.
+
+    Además, debería seguir el orden esperado de FIFO, pero parece que la secuencia se rompe.
+
+    El nodo de tnull no debería estar involucrado en las operaciones normales de cola.
+\end{itemize}
 
 \hfill
 
