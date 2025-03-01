@@ -78,14 +78,29 @@ Argumenta porqué.
 
 \item \textbf{Problema.} Supón que perteneces a un equipo de trabajo en el cual estás a cargo de dar acceso a un servidor. Seis personas te pueden mandar tareas para que las ejecutes en el servidor. Las tareas del hilo 0 y 2 tardan 500ns, las del hilo 1 tardan 2000ns y las de los hilos 3, 4 y 5 tardan 3000ns.
 
-Tienes la instrucción de no dar acceso a más de tres al mismo tiempo y de no aceptar al mismo tiempo las tareas del hilo 0 y 2. Diseña e implementa una solución. Hint: Apóyate del programa Scheduler y Tarea, el semáforo inicializado en 3 representa que solo pueden entrar 3 al mismo tiempo, decide como utilizarlo en el programa Tarea (colocando sus métodos adquire y release); además, decide como utilizar un candado, para restringir aceptar las tareas de los hilos 0 y 2 al mismo tiempo.
+Tienes la instrucción de no dar acceso a más de tres al mismo tiempo y de no aceptar al mismo tiempo las tareas del hilo 0 y 2. Diseña e implementa una solución. 
+
+\textit{Hint:} Apóyate del programa Scheduler y Tarea, el semáforo inicializado en 3 representa que solo pueden entrar 3 al mismo tiempo, decide como utilizarlo en el programa Tarea (colocando sus métodos adquire y release); además, decide como utilizar un candado, para restringir aceptar las tareas de los hilos 0 y 2 al mismo tiempo.
 
 \begin{itemize}
     \item ¿Tu implementación cumple con Justicia?
 
+    A grandes rasgos, podemos tomar a la definición de Justicia como el hecho de que se respeten los tiempos de que hilo pidió el acceso a la sección crítica primero, es decir, que se cumpla FIFO (First In, First Out), analizando nuestro programa tras varias ejecuciones, podemos concluir que no en todos los escenarios se cumple esta propiedad.
+    
+    Un contraejemplo se da en los casos de las tareas 0 y 2 salgan una muy cerca de la otra (ej. 0,1,2,3,4,5), ya que las primeras 3 tareas que se procesarían serian 0, 1 y 3. 
+
+    Otro de los problemas que se llega a presentar es que al haber tareas más rápidas que otras, se dan casos donde estas terminan "salen" antes que alguna predecesora.
+
     \item Sino es así, describe cómo podrías garantizarla.
 
-    A grandes rasgos, podemos tomar a la definición de Justicia como el hecho de que se respeten los tiempos de que hilo pidió el acceso a la sección crítica primero, es decir, que se cumpla FIFO (First In, First Out), analizando nuestro programa tras varias ejecuciones  
+    Entre la propuestas que podemos dar para solucionar este tipo de contratiempos, se puede implementar un manejo mas fino de esta excepción (que trabajen el 0 y el 2 a la vez), el controlar que a pesar de que haya tareas más rápidas que otras, de dar cierto margen para que acaben en el mismo orden que se iniciaron, e incluso podemos llevar esta análisis más profundo a cuestiones de la propia máquina virtual de Java donde por cuestiones de interpretación de la misma no es posible al 100\% (ej. en la imagen siguiente).
+
+    \begin{center}
+            \includegraphics[width = 8 cm]{images/Ejercicio6.png}
+    \end{center}
+
+    Veamos como la propia JVM, cambia el orden de los hilos de 0,3,5 a 0,5,3, que aunque parece insignificante, cuando manejamos grandes volúmenes de tareas tiene grandes repercusiones.
+  
 \end{itemize}
     
 \end{enumerate}
