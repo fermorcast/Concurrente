@@ -1,5 +1,3 @@
-package Ejercicio6;
-
 public class Tarea implements Runnable {
     private final int taskId;
     private int executionTime;
