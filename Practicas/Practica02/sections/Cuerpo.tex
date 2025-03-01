@@ -23,6 +23,8 @@
 
 \item El programa ColaSecuencial es una implementación de una cola secuencial. Implementa una Cola concurrente utilizando una pool de hilos (ExecutorService). No utilices candados ni synchronized.
 
+\textbf{\textit{Ejercicio resuelto de forma practica y adjunto dentro del archivo comprimido}}
+
 \hfill
 
 \item Ejecuta varias veces tu implementación con diferentes secuencias de llamadas a métodos ¿Tu implementación funciona de acuerdo a lo que se espera de una cola o suceden inconsistencias? Por ejemplo,
@@ -47,6 +49,12 @@ Si existe una ejecución así toma una captura pantalla del resultado de tu prog
 
 \item ¿Existen data races o race-conditions? Explica en qué variables y porqué suceden.
 
+Recordando ambas definiciones, mientras que una \textit{race-condition} ocurre cuando en una ejecución dos o más hilos acceden a un recurso compartido, una \textit{data race} es cuando dos o más hilos compiten por escribir al mismo recurso o lo llaman al mismo tiempo y po lo menos una es de escritura.
+
+Observemos que nuestra implementación de nuestra cola secuencial, incluye el empleo de la clase \textbf{Lock}, misma que nos ayuda a tener un control flexible de nuestra zona crítica al momento de meter y o sacar elementos a la cola, pero esto a su vez impide que caigamos en problemas del tipo data races o race-conditions.
+
+$\therefore$ No hay data races o race-conditions en nuestra implementación de cola concurrente.
+
 \hfill
 
 \item  Utiliza candados y/o synchronized en tu implementación de forma que los métodos enq() y deq() sean una sola sección crítica y contesta: ¿existen inconsistencias?
@@ -54,10 +62,12 @@ Importante: El orden en el que se suben las tareas con submit y se guardan en lo
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{resources/Ejercicio4.png}
+    \includegraphics[width=0.8\textwidth]{images/Ejercicio4.png}
 \end{figure}
 
 Podemos ver que no hay inconsistencias, ya que hay locks en la sección crítica donde esto puedo fallar, en especifico el uso de lock()  y unlock() aseguran que un hilo a la vez pueda modificar la cola.
+\hfill
+
 \hfill
 
 \item En una pool de hilos (ExecutorService), ¿si utilizamos más hilos equivale a un mayor throughput?
@@ -74,6 +84,8 @@ Tienes la instrucción de no dar acceso a más de tres al mismo tiempo y de no a
     \item ¿Tu implementación cumple con Justicia?
 
     \item Sino es así, describe cómo podrías garantizarla.
+
+    A grandes rasgos, podemos tomar a la definición de Justicia como el hecho de que se respeten los tiempos de que hilo pidió el acceso a la sección crítica primero, es decir, que se cumpla FIFO (First In, First Out), analizando nuestro programa tras varias ejecuciones  
 \end{itemize}
     
 \end{enumerate}
