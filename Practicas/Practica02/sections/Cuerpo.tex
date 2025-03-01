@@ -280,7 +280,41 @@ Podemos ver que no hay inconsistencias, ya que hay locks en la sección crítica
 
 \item En una pool de hilos (ExecutorService), ¿si utilizamos más hilos equivale a un mayor throughput?
 
-Argumenta porqué.
+Argumenta porqué.\\
+
+El número óptimo de hilos dependerá de la naturaleza del programa y de los recursos del sistema.
+
+Recordemos que throughput se refiere a la cantidad de trabajo que un sistema puede completar en un periodo de tiempo determinado.
+
+El impacto de la cantidad de hilos en el throughput no es directo ni siempre lineal. 
+
+En un sistema donde las tareas son independientes y no requieren recursos compartidos o sincronización entre hilos, aumentar el número de hilos generalmente incrementa el throughput, esto pasa por que más hilos pueden ejecutarse en paralelo, permitiendo que el sistema realice más tareas al mismo tiempo.
+
+Debemos considerar que se tienen algunas ventajas, como por ejemplo, si hay muchas tareas que se pueden ejecutar de forma concurrente, tener más hilos permite que el sistema ejecute más tareas simultáneamente. También, en sistemas donde las tareas no están esperando recursos, más hilos pueden mejorar el throughput.
+
+Sin embargo, más hilos no siempre nos dan un mejor rendimiento, debido a varios factores de sobrecarga:
+
+
+\begin{itemize}
+    \item \textbf{Overhead de cambio de contexto}: Cuando hay más hilos que núcleos de CPU, el sistema operativo tiene que gestionar el cambio de contexto entre hilos. Esto consume recursos y puede reducir el rendimiento si se supera la cantidad de núcleos de CPU.
+    \item \textbf{Contención de recursos compartidos}: Si los hilos compiten por recursos comunes, pueden producirse bloqueos, reduciendo el throughput.
+    \item \textbf{Carga de sincronización}: En tareas que requieren sincronización entre hilos, como el uso de \texttt{synchronized} o \texttt{ReentrantLock}, más hilos pueden causar bloqueos y aumentar la latencia de las operaciones, afectando negativamente al throughput.
+\end{itemize}
+
+Recordemos que la Ley de Amdahl nos dice que el rendimiento de un programa solo puede mejorar hasta cierto límite a medida que se añaden más hilos, esto es por que siempre habrá una parte del programa que no puede paralelizarse.
+
+\[
+S_{\text{total}} = \frac{1}{(1 - P) + \frac{P}{N}}
+\]
+
+donde:
+\begin{itemize}
+    \item \(S_{\text{total}}\) es la velocidad total del programa con paralelización.
+    \item \(P\) es la fracción del programa que puede paralelizarse.
+    \item \(N\) es el número de hilos.
+\end{itemize}
+
+Si una parte significativa del programa es secuencial, aumentar el número de hilos no mejorará significativamente el throughput.
 
 \hfill
 
