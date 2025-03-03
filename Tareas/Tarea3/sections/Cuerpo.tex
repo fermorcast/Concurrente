@@ -16,15 +16,17 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
     \begin{enumerate}
         \item ¿Cuál es la diferencia entre una historia secuencial y una concurrente?
 
-        
+        Tomando como definición de historia como \textit{"una secuencia finita de eventos de invocación y de respuesta"}, lo que distancia a las historias secuenciales de las concurrentes es que las secuenciales forzosamente cada invocación se un método hace match enseguida con su respuesta, mientras que las concurrentes no cumplen en todos los casos esta regla. 
         
         \item Describe con tus propias palabras, ¿en qué consiste la linealizabilidad?
 
-        
+        La linealizabilidad es una propiedad dentro del mundo concurrente la cual nos permite asegurar que a pesar de que múltiples operaciones se puedan realizar de forma concurrente, el sistema se comportará como si estas operaciones se ejecutaran secuencialmente. 
         
         \item Describe con tus propias palabras, ¿cuál es la diferencia entre la consistencia secuencial y la linealizabilidad?
 
-        
+        La diferencia radica en que la consistencia secuencial requiere de mantener el orden de las operaciones (1 subhistoria por hilo) de cada hilo, mientras que para la linealizabilidad requiere mantener las precendencia de las operaciones a nivel global (historia completa).
+
+        \hfill
     \end{enumerate}
 
     \item ¿La siguiente propiedad es equivalente a decir que un objeto x es wait-free?
