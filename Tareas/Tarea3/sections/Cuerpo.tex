@@ -31,8 +31,14 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
 
     \item ¿La siguiente propiedad es equivalente a decir que un objeto x es wait-free?
     Argumenta por qué.
+
+    \textbf{Propiedad:} Para toda historia infinita \texttt{H} de \texttt{x}, cada hilo que toma un número finito de pasos en \texttt{H} completa un número finito de llamadas a métodos.
+
+    Esta definición es equivalente a \texttt{wait-free} ya que nos garantiza que cualquier elemento \texttt{x} en \texttt{H} con pasos finitos van a terminar los mismos, en esencia es la definición que tenemos de \texttt{wait-free} es el algoritmo que nos garantiza que cada llamada termina su ejecución en un número finito de pasos. Además de que cumple la definición de ser no bloqueante. Esto significa que los hilos o en este caso que cada elemento de \texttt{x} es no retrasara a los demás elementos de \texttt{H}. esto porque siempre realizara un numero finito de pasos para terminar de ejecutar un número finito de llamadas a métodos.
+
+    Por lo que si esta propiedad nos dice que \texttt{x} terminara sus llamadas en un número finito de pasos es equivalente a la que \texttt{x} es \texttt{wait-free}.
     
-    \textbf{Propiedad:} Para toda historia infinita H de x, cada hilo que toma un número infinito de pasos en H completa un número infinito de llamadas a métodos. 
+    \hfill
 
     \item Considera la siguiente ejecución de una implementación de una pila para tres hilos p, q, r y sobre un solo objeto (de tipo pila).
     
@@ -46,9 +52,16 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
         \item ¿Es linealizable con respecto a una pila? De ser así, incluye una 
         linearización y especifica la extensión de H y complete(H').
 
+        \hfill
+
         \item ¿Es secuencialmente consistente? Incluye una historia que lo justifique.
 
+        \hfill
+
         \item ¿Es consistente en la inactividad? Incluye una historia que lo justifique.
+
+        \hfill
+        
     \end{enumerate}
 
     \item Considera la siguiente ejecución de una implementación de una pila para dos hilos p, q y sobre dos objetos (de tipo pila) A, B. (Considera la especificación secuencial del ejercicio 2)
@@ -60,9 +73,15 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
     \begin{enumerate}
         \item Considera que H es la historia de la ejecución, ¿H$\vert$A y H$\vert$B son secuencialmente consistentes?
 
+        \hfill
+
         \item Considera que H es la historia de la ejecución, ¿H$\vert$A y H$\vert$B son linealizables?
 
+        \hfill
+
         \item ¿La historia H es secuencialmente consistente y linealizable?
+
+        \hfill
     \end{enumerate}
 
     \item Considera la siguiente clase \textit{Visibility}:
@@ -74,11 +93,60 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
     \begin{enumerate}
         \item ¿Es posible que el método readerThread() divida entre cero? Argumenta porqué.
 
+        Sí, es posible que el método \texttt{readerThread()} divida entre cero.\\
+
+        \textbf{Explicación:}
+
+        En el código solo la variable \texttt{flag} está declarada como \texttt{volatile}, mientras que \texttt{x} no lo está. Esto puede causar problemas de visibilidad debido al modelo de memoria de Java.
+        
+        \begin{itemize}
+            \item Aunque el hilo escritor asigna \texttt{x = 1} antes de \texttt{flag = true}, el hilo lector puede ver el cambio en \texttt{flag} sin necesariamente ver el cambio en \texttt{x}. Esto se debe a que, sin la palabra clave \texttt{volatile} en \texttt{x}, no hay garantía de que el valor actualizado de \texttt{x} sea visible para otros hilos en el momento en que leen \texttt{flag}.
+        
+            \item El compilador y la CPU pueden reordenar las instrucciones para optimizar el rendimiento. Sin \texttt{volatile}, no hay garantías sobre el orden en que las escrituras a \texttt{x} y \texttt{flag} serán visibles para otros hilos.
+        \end{itemize}
+        
+        El hilo lector puede salir del bucle \texttt{while(!flag){}} al ver \texttt{flag = true}, pero aún puede leer el valor antiguo de \texttt{x = 0}. Al ejecutar \texttt{int y = 100 / x;}, si \texttt{x} es \texttt{0}, se producirá una división por cero, lanzando una \texttt{ArithmeticException}.\\
+
         \item Si ambas variables son volatile, ¿es posible que el método readerThread() divida entre cero?
         
         Argumenta porqué.
 
+        No, no es probable que el método \texttt{readerThread()} divida entre cero si ambas variables son \texttt{volatile}.\\
+
+        \textbf{Explicación:}
+        \begin{itemize}
+            \item En Java, la palabra clave \texttt{volatile} asegura que las operaciones de lectura y escritura sean atómicas y proporciona garantías de visibilidad y ordenamiento de memoria.
+        
+            \item Cuando un hilo escribe en una variable \texttt{volatile} y otro hilo lee esa misma variable, se establece una relación de "sucede antes" \textit{(happens-before)}. Esto significa que todas las escrituras realizadas antes de escribir en la variable \texttt{volatile} son visibles para el hilo que lee después la misma variable \texttt{volatile}.
+        \end{itemize}
+        
+        \textbf{Aplicación al código:}
+        
+        \begin{itemize}
+        \item El hilo escritor asigna \texttt{x = 1;} seguido de \texttt{flag = true;}.
+        \item Como ambas variables son \texttt{volatile}, cuando el hilo lector ve \texttt{flag = true}, también garantiza que verá \texttt{x = 1}.
+        \end{itemize}
+        
+        El hilo lector no debería dividir entre cero porque \texttt{x} habrá sido actualizado a 1 antes de que \texttt{flag} sea visible como \texttt{true}. Por lo tanto, \texttt{int y = 100 / x;} se evaluará como \texttt{int y = 100 / 1;}, evitando la división por cero.\\
+
         \item Si ninguna de las dos variables es volatile, ¿es posible que el método readerThread() divida entre cero? Argumenta porqué.
-    \end{enumerate}
+
+        Sí, es posible y más probable que el método \texttt{readerThread()} divida entre cero si ninguna de las dos variables es \texttt{volatile}.\\
+
+        \textbf{Explicación:}
+        \begin{itemize}
+            \item Sin \texttt{volatile} no hay garantías sobre cuándo (o si) las actualizaciones a \texttt{x} y \texttt{flag} serán visibles para otros hilos. El hilo lector puede no ver nunca las actualizaciones realizadas por el hilo escritor, o verlas en un orden diferente.
+        
+            \item El compilador o el procesador pueden reordenar las instrucciones, lo que significa que el hilo escritor podría, desde la perspectiva del hilo lector, asignar primero \texttt{flag = true} antes de \texttt{x = 1}.
+        \end{itemize}
+        
+        \textbf{Consecuencia:}
+        
+        \begin{itemize}
+            \item El hilo lector puede salir del bucle \texttt{while(!flag){}} al ver un valor desactualizado de \texttt{flag} o nunca salir del bucle si no ve el cambio.
+            \item Si sale del bucle y \texttt{x} aún es \texttt{0} (porque no ha visto la actualización), al ejecutar \texttt{int y = 100 / x;}, se producirá una división por cero.
+        \end{itemize}
+         Se podría dar el caso que el hilo lector entre en un bucle infinito si nunca ve el cambio en \texttt{flag}, ya que no es \texttt{volatile}.
+            \end{enumerate}
     
 \end{enumerate}
