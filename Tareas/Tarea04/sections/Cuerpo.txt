@@ -1,0 +1,182 @@
+\section*{Instrucciones:}
+
+La tarea se entrega y se resuelve en equipos de máximo 3 integrantes (1 a 3 personas). La tarea se entrega virtualmente en formato pdf tanto si son fotos de cuaderno, está realizada en word, en LATEX, etc.
+
+No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 días de retraso para ser evaluadas sobre 8.
+
+\textbf{Puntos Totales: 100}
+
+\textbf{Tiempo estimado: $\approx$ 1hrs 30 mins}
+
+\section*{Ejercicios}
+
+\textbf{1. (15 min / 12.5 puntos)} De acuerdo a la clase y al siguiente video \url{https://youtu.be/iAqyufwYcHc?si=rRdjISdUndNSakb9} (también puedes consultar el libro principal en el capítulo 4) contesta de forma breve:
+
+\begin{enumerate}
+    \item[(a)] ¿En qué consiste la transformación de un registro seguro a un registro regular?
+
+    \hfill
+    
+    \item[(b)] ¿Cuál es la diferencia entre un registro atómico y uno regular?
+    
+    \hfill
+    
+    \item[(c)] ¿Qué relación hay entre los registros atómicos y el algoritmo de Bakery (históricamente de acuerdo a Lamport)?
+
+    \hfill
+\end{enumerate}
+
+\hfill
+
+\textbf{2. (30 min / 25 puntos)} Analiza la siguiente ejecución (Figura 1) con respecto a la implementación del \textit{Snapshot Wait-free} (código en Figura 2). La inicialización del Snapshot es $SS = [\perp,\perp,\perp,\perp]$, donde:
+
+\begin{itemize}
+    \item $SS[0] =$ registro de A,
+    
+    \item $SS[1] =$ registro de B,
+    
+    \item $SS[2] =$ registro de C,
+    
+    \item $SS[3] =$ registro de D.
+    
+\end{itemize}
+
+Dados los siguientes valores de las vistas $V_d$ y $V_a$, ¿es posible que la ejecución sea una ejecución del \textit{Snapshot Wait-free}? Si tu respuesta es sí, argumenta por qué es linealizable con respecto a un objeto de tipo \textit{Snapshot atómico} (muestra una linearización).
+
+\begin{enumerate}
+    \item[(a)] Si $V_d = [\perp, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_4,\perp]$.
+
+    \hfill
+    
+    \item[(b)] Si $V_d = [v_1, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_3,\perp]$.
+
+    \hfill
+    
+    \item[(c)] Si $V_d = [v_1, v_2, v_3,\perp]$ y $V_a = [v_1, v_2, v_4,\perp]$.
+
+    \hfill
+    
+\end{enumerate}
+
+\hfill
+
+\textbf{3. (20 min / 25 puntos)} Plantea una ejecución del \textit{Snapshot Wait-free} (código en Figura 2) para $n = 4$ hilos en donde muestres un ejemplo de por qué esta implementación es \textbf{bounded wait-free}. Es decir, que cada $\texttt{update()}$ o $\texttt{scan()}$ termina en a lo más $O(n^2)$ lecturas o escrituras (pasos).
+\textit{\textbf{Hint:} Muestra uno de los peores escenarios en donde 4 llamadas $\texttt{update()}$ se traslapan.}
+
+\hfill
+
+\textbf{4. (20 min / 25 puntos)} Describe una ejecución del \textit{Snapshot Obstruction-Free} (código en Figura 3) en la cual el método $\texttt{scan()}$ de un hilo A nunca termina (considera $n = 3$ hilos).
+
+
+\begin{verbatim}
+public class SimpleSnapshot <T > implements Snapshot <T > {
+    private StampedValue <T >[] a_table ; // array of atomic MRSW registers
+
+    public SimpleSnapshot ( int capacity , T init ) {
+        a_table = ( StampedValue <T >[]) new StampedValue [ capacity ];
+        for ( int i = 0; i < capacity ; i ++) {
+            a_table [ i ] = new StampedValue <T >( init ) ;
+        }
+    }
+
+    public void update ( T value ) {
+        int me = ThreadID . get () ;
+        StampedValue <T > oldValue = a_table [ me ];
+        StampedValue <T > newValue =
+            new StampedValue <T >(( oldValue . stamp ) +1 , value ) ;
+        a_table [ me ] = newValue ;
+    }
+
+    private StampedValue <T >[] collect () {
+        StampedValue <T >[] copy = ( StampedValue <T >[])
+            new StampedValue [ a_table . length ];
+        for ( int j = 0; j < a_table . length ; j ++)
+            copy [ j ] = a_table [ j ];
+        return copy ;
+    }
+
+    public T [] scan () {
+        StampedValue <T >[] oldCopy , newCopy ;
+        oldCopy = collect () ;
+        collect : while ( true ) {
+            newCopy = collect () ;
+            if (! Arrays . equals ( oldCopy , newCopy ) ) {
+                oldCopy = newCopy ;
+                continue collect ;
+            }
+            T [] result = ( T []) new Object [ a_table . length ];
+            for ( int j = 0; j < a_table . length ; j ++)
+                result [ j ] = newCopy [ j ]. value ;
+            return result ;
+        }
+    }
+}
+\end{verbatim} 
+
+
+En la ejecución de Snapshot Obstruction-Free presentada, el método \texttt{scan()} de un hilo puede no finalizar si
+otros hilos están constantemente realizando actualizaciones. Así es como pasaría:\\
+
+\textbf{Hilos involucrados:}
+
+\begin{itemize}
+    \item \textbf{Hilo A}: Intenta ejecutar \texttt{scan()}.
+    
+    \item \textbf{Hilos B y C}: Ejecutan repetidamente \texttt{update()} en sus registros sin pausa.
+\end{itemize}
+
+\textbf{Ejecución:}
+\begin{enumerate}
+    \item \textbf{Hilo A} inicia el método \texttt{scan()} y realiza la primera \texttt{collect()}, guardando los valores en \texttt{oldCopy}.
+    
+    \item Antes de que \textbf{A} realice la segunda \texttt{collect()}, \textbf{B} o \textbf{C} completan un \texttt{update()}, incrementando su sello
+    de tiempo (\texttt{stamp}) y cambiando su valor en \texttt{a\_table}.
+    
+    \item \textbf{Hilo A} realiza la segunda \texttt{collect()}, obteniendo \texttt{newCopy}. Debido a las actualizaciones recientes,
+    \texttt{oldCopy} y \texttt{newCopy} difieren.
+    
+    \item Al detectar la diferencia, \textbf{A} actualiza \texttt{oldCopy} con \texttt{newCopy} y repite el bucle \texttt{while}.
+    
+    \item Este proceso se repite indefinidamente, ya que \textbf{B} y \textbf{C} continúan realizando actualizaciones que cambian
+    el estado de \texttt{a\_table} entre las dos llamadas a \texttt{collect()} de \textbf{A}.
+\end{enumerate}
+
+\textbf{Resultado:}
+\begin{itemize}
+    \item El método \texttt{scan()} de \textbf{A} nunca termina porque siempre encuentra cambios entre las dos colecciones consecutivas, debido a la interferencia constante de \textbf{B} y \textbf{C}.
+    
+    \item El algoritmo es \textit{obstruction-free}, lo que significa que solo garantiza el progreso de un hilo si no hay interferencia de otros hilos.
+\end{itemize}
+
+\textbf{Por lo tanto:}
+\begin{itemize}
+    \item El hilo A nunca logra que \texttt{oldCopy} y \texttt{newCopy} sean iguales, por lo que el bucle \texttt{while (true)} nunca termina.
+    
+    \item Ocasionando que el método \texttt{scan()} de A nunca finalice.
+\end{itemize}
+
+\hfill
+
+\textbf{5. (15 min / 12.5 puntos)} Si en la implementación del \textit{Snapshot Obstruction-free} modificamos el método $\texttt{scan()}$ de la siguiente manera:
+
+\begin{verbatim}
+public T[] scan() {
+    copy = collect();
+    T[] result = T[] new Object(a_table.length);
+    for (int j = 0; j < a_table.length; j++) {
+        result[j] = copy[j].value;
+    }
+    return result;
+}
+\end{verbatim}
+
+\begin{itemize}
+    \item ¿Podría suceder la siguiente implementación de la Figura 5? Supón que inicialmente el arreglo está inicializado: $[\perp,\perp,\perp]$.
+
+    \hfill
+    
+    \item ¿La implementación seguiría siendo linealizable? Argumenta por qué.
+
+    \hfill
+    
+\end{itemize}
