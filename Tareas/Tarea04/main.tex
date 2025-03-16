@@ -1,0 +1,28 @@
+\documentclass[12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish, mexico]{babel}
+\usepackage[left=2.54cm,right=2.54cm,top=2.54cm,bottom=2.54cm]{geometry}
+
+\input{docUI/Paquetes}
+\input{docUI/Extras}
+\input{docUI/Commandos}
+
+\pagestyle{fancy}
+\color{Blanco}
+\lstset{style=mystyle}
+\pagecolor{Negro}
+\sloppy 
+
+\thispagestyle{empty} % Diseño de encabezados y pies de página
+\setlength{\parindent}{0cm} % Indentation 0
+\setlength{\headheight}{22.5pt}
+\setlength{\columnsep}{40pt} % separación de columnas
+
+%--------
+
+\begin{document}
+
+\input{sections/Portada}
+\input{sections/Cuerpo}
+
+\end{document}
