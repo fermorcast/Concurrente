@@ -54,8 +54,7 @@ Dados los siguientes valores de las vistas $V_d$ y $V_a$, ¿es posible que la ej
 \begin{enumerate}
     \item[(a)] Si $V_d = [\perp, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_4,\perp]$.
 
-    Esta  ejecución no es posible, esto se debe a que con base a la posición donde se encuentra nuestro $V_d$, al momento de reflejar esta vista siguiendo lo propuesto sería $V_d = [\perp, v_2, v_4,\perp]$, mientras que según nuestra historia de nuestros hilos para este punto, en el hilo A ya se cumplió la actualización de $v_1$, misma que nos debería de otorgar como vista a $V_d = [v_1, v_2, v_4,\perp]$.
-
+        Esta  ejecución no es posible, esto se debe a que con base a la posición donde se encuentra nuestro $V_d$, al momento de reflejar esta vista siguiendo lo propuesto sería $V_d = [\perp, v_2, v_4,\perp]$, mientras que según nuestra historia de nuestros hilos para este punto, en el hilo A ya se cumplió la actualización de $v_1$, por lo cual no podemos armar una linearización que encaje con lo pedido.
     $\therefore$ No es linealizable.\\
     
     \item[(b)] Si $V_d = [v_1, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_3,\perp]$.
