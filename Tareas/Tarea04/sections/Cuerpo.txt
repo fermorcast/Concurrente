@@ -15,13 +15,15 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
 \begin{enumerate}
     \item[(a)] ¿En qué consiste la transformación de un registro seguro a un registro regular?
 
-    \hfill
+    Para transformar un registro seguro a uno regular, lo que debemos de hacer es añadir un registro adicional en donde el hilo que escribe guarda el valor viejo.\\
     
     \item[(b)] ¿Cuál es la diferencia entre un registro atómico y uno regular?
-    
-    \hfill
+
+    La diferencia radica en que el brinco entre un registro regular a uno atómico es que el registro atómico también satisface que una lectura anterior no puede devolver un valor de retorno después de ser devuelto por una lectura posterior.\\
     
     \item[(c)] ¿Qué relación hay entre los registros atómicos y el algoritmo de Bakery (históricamente de acuerdo a Lamport)?
+
+    A partir de la palabras de Lamport, podemos ver que en la descripción de su paper original donde abordaba el desglose del funcionamiento del algoritmo del panadero, que este necesitaba registros con propiedades cuando menos muy similares a lo que hoy conocemos como los registros atómicos, para operar correctamente.
 
     \hfill
 \end{enumerate}
@@ -43,6 +45,12 @@ No habrán reposiciones de tareas. Las tareas se pueden entregar con máximo 2 d
 
 Dados los siguientes valores de las vistas $V_d$ y $V_a$, ¿es posible que la ejecución sea una ejecución del \textit{Snapshot Wait-free}? Si tu respuesta es sí, argumenta por qué es linealizable con respecto a un objeto de tipo \textit{Snapshot atómico} (muestra una linearización).
 
+\begin{center}
+    \includegraphics[width = 10 cm]{Images/Pregunta2_4.png}
+\end{center}
+
+\hfill
+
 \begin{enumerate}
     \item[(a)] Si $V_d = [\perp, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_4,\perp]$.
 
@@ -62,6 +70,10 @@ Dados los siguientes valores de las vistas $V_d$ y $V_a$, ¿es posible que la ej
 
 \textbf{3. (20 min / 25 puntos)} Plantea una ejecución del \textit{Snapshot Wait-free} (código en Figura 2) para $n = 4$ hilos en donde muestres un ejemplo de por qué esta implementación es \textbf{bounded wait-free}. Es decir, que cada $\texttt{update()}$ o $\texttt{scan()}$ termina en a lo más $O(n^2)$ lecturas o escrituras (pasos).
 \textit{\textbf{Hint:} Muestra uno de los peores escenarios en donde 4 llamadas $\texttt{update()}$ se traslapan.}
+
+\begin{center}
+    \includegraphics[height = 12 cm]{Images/Pregunta3_4.png}
+\end{center}
 
 \hfill
 
