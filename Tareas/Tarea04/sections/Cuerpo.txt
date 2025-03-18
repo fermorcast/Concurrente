@@ -54,13 +54,33 @@ Dados los siguientes valores de las vistas $V_d$ y $V_a$, ¿es posible que la ej
 \begin{enumerate}
     \item[(a)] Si $V_d = [\perp, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_4,\perp]$.
 
-    \hfill
+    Esta  ejecución no es posible, esto se debe a que con base a la posición donde se encuentra nuestro $V_d$, al momento de reflejar esta vista siguiendo lo propuesto sería $V_d = [\perp, v_2, v_4,\perp]$, mientras que según nuestra historia de nuestros hilos para este punto, en el hilo A ya se cumplió la actualización de $v_1$, misma que nos debería de otorgar como vista a $V_d = [v_1, v_2, v_4,\perp]$.
+
+    $\therefore$ No es linealizable.\\
     
     \item[(b)] Si $V_d = [v_1, v_2, v_4,\perp]$ y $V_a = [v_1, v_2, v_3,\perp]$.
 
-    \hfill
+    Esta ejecución tampoco es posible, ya que tomando de referencia a la posición donde se encuentra nuestro $V_a$, como para cuando tenemos nuestro $V_d$ este ya leyó a $v_4$; para mantener nuestra consistencia secuencial, este solamente puede leer los mismos registros o posteriores a este, por lo cual, este no puede leer a $v_3$ ya que es anterior a $v_4$ en la historia mostrada.
+
+    $\therefore$ No es linealizable.\\
     
     \item[(c)] Si $V_d = [v_1, v_2, v_3,\perp]$ y $V_a = [v_1, v_2, v_4,\perp]$.
+
+    Para probar que esta es una ejecución \textit{Snapshot Wait-free}, debemos de probar que existe una linearización creíble a partir del modelo planteado, recordando que en caso de que haya eventos que se traslapen, los podemos ordenar de la manera que más nos convenga con el fin de expresar la linearización, tenemos lo siguiente:
+
+    A.update($v_1$)
+
+    B.update($v_2$)
+
+    C.update($v_3$)
+
+    B.scan($V_d$)
+
+    C.update($v_4$)
+
+    A.scan($V_a$)
+
+    Como existe una linearización, podemos concluir que si cumple con ser una ejecución de un \textit{Snapshot Wait-free}.
 
     \hfill
     
@@ -72,59 +92,55 @@ Dados los siguientes valores de las vistas $V_d$ y $V_a$, ¿es posible que la ej
 \textit{\textbf{Hint:} Muestra uno de los peores escenarios en donde 4 llamadas $\texttt{update()}$ se traslapan.}
 
 \begin{center}
-    \includegraphics[height = 12 cm]{Images/Pregunta3_4.png}
+    \includegraphics[height = 13.5 cm]{Images/Pregunta3_4.png}
 \end{center}
+
+Sabemos que, por la definición de bounded wait-free, lo que se debe de probar es que está topado a $O(n^2)$ lecturas o escrituras (pasos) como máximo cada update().
+
+Analizando el peor caso, observando la ejecución de este, supongamos que tenemos nuestros 4 hilos $\{0,1,2,3\}$:
+
+Comenzando con que Los 4 hilos ejecutan update() simultáneamente, cada uno llama a scan(), analizando las operaciones implicadas en este paso:
+
+\begin{itemize}
+
+    \item $O(n)$ operaciones en el collect() inicial
+    
+    \item $O(n)$ operaciones en cada collect() dentro del bucle
+
+    \item $O(n)$ comparaciones en cada iteración
+
+\end{itemize}
+
+    Por lo cual, tras en análisis inicial, podemos ver que la ejecucióndle proceso sin traslape es de complejidad lineal ($O(n)$)
+
+Ahora bien, notemos que el peor caso o caso crítico ocurre cuando para un hilo (supongamos SPG, que es el hilo 0):
+
+1. El hilo 0 inicia update() y llama a scan()
+
+2. Mientras scan() está en progreso, el hilo 1 completa un update()
+
+3. Cuando scan() hace su primer collect() y luego el segundo, detecta que el hilo 1 ha cambiado
+
+4. Luego el hilo 2 completa un update()
+
+5. En la siguiente iteración, scan() detecta que el hilo 2 ha cambiado
+Y así sucesivamente
+
+Veamos que en el peor de los casos, para cada hilo lo que ocurre es que los otros hilos ya hayan concluido un update(), como sabemos que estamos trabajando con Snapshots atómicos por las propiedades de estos, sabemos que no puede devolver un valor de retorno después de ser devuelto por una lectura posterior, es decir, no pueden estar haciendo en bucles updates(), los otros hilos a lo más pueden completar 1 antes de que este termine el suyo.
+
+Considerando los $n$ hilos, veamos que el máximo numero de updates que se pueden dar con la suma de Pascal ($\frac{n (n-1)}{2}$), que en nuestro caso son 6 para los cuatro hilos, y esto se realiza en tiempo cuadrático $O(n^2)$. 
+
+Como no hubo operación que requiriera una complejidad superior a cuadrática en cuanto al número de operaciones, podemos considerar que $O(n^2)$ es el tope de pasos para cada update().
+
+$\therefore$ El \textit{Snapshot Wait-free} cumple con ser bounded wait-free.\\
 
 \hfill
 
 \textbf{4. (20 min / 25 puntos)} Describe una ejecución del \textit{Snapshot Obstruction-Free} (código en Figura 3) en la cual el método $\texttt{scan()}$ de un hilo A nunca termina (considera $n = 3$ hilos).
 
-
-\begin{verbatim}
-public class SimpleSnapshot <T > implements Snapshot <T > {
-    private StampedValue <T >[] a_table ; // array of atomic MRSW registers
-
-    public SimpleSnapshot ( int capacity , T init ) {
-        a_table = ( StampedValue <T >[]) new StampedValue [ capacity ];
-        for ( int i = 0; i < capacity ; i ++) {
-            a_table [ i ] = new StampedValue <T >( init ) ;
-        }
-    }
-
-    public void update ( T value ) {
-        int me = ThreadID . get () ;
-        StampedValue <T > oldValue = a_table [ me ];
-        StampedValue <T > newValue =
-            new StampedValue <T >(( oldValue . stamp ) +1 , value ) ;
-        a_table [ me ] = newValue ;
-    }
-
-    private StampedValue <T >[] collect () {
-        StampedValue <T >[] copy = ( StampedValue <T >[])
-            new StampedValue [ a_table . length ];
-        for ( int j = 0; j < a_table . length ; j ++)
-            copy [ j ] = a_table [ j ];
-        return copy ;
-    }
-
-    public T [] scan () {
-        StampedValue <T >[] oldCopy , newCopy ;
-        oldCopy = collect () ;
-        collect : while ( true ) {
-            newCopy = collect () ;
-            if (! Arrays . equals ( oldCopy , newCopy ) ) {
-                oldCopy = newCopy ;
-                continue collect ;
-            }
-            T [] result = ( T []) new Object [ a_table . length ];
-            for ( int j = 0; j < a_table . length ; j ++)
-                result [ j ] = newCopy [ j ]. value ;
-            return result ;
-        }
-    }
-}
-\end{verbatim} 
-
+\begin{center}
+    \includegraphics[width = 12 cm]{Images/Pregunta4_4.png}
+\end{center}
 
 En la ejecución de Snapshot Obstruction-Free presentada, el método \texttt{scan()} de un hilo puede no finalizar si
 otros hilos están constantemente realizando actualizaciones. Así es como pasaría:\\
@@ -171,19 +187,16 @@ otros hilos están constantemente realizando actualizaciones. Así es como pasar
 
 \textbf{5. (15 min / 12.5 puntos)} Si en la implementación del \textit{Snapshot Obstruction-free} modificamos el método $\texttt{scan()}$ de la siguiente manera:
 
-\begin{verbatim}
-public T[] scan() {
-    copy = collect();
-    T[] result = T[] new Object(a_table.length);
-    for (int j = 0; j < a_table.length; j++) {
-        result[j] = copy[j].value;
-    }
-    return result;
-}
-\end{verbatim}
+\begin{center}
+    \includegraphics[width = 12 cm]{Images/Pregunta51_4.png}
+\end{center}
 
 \begin{itemize}
     \item ¿Podría suceder la siguiente implementación de la Figura 5? Supón que inicialmente el arreglo está inicializado: $[\perp,\perp,\perp]$.
+
+    \begin{center}
+        \includegraphics[width = 8 cm]{Images/Pregunta5_4.png}
+    \end{center}
 
     \hfill
     
