@@ -195,11 +195,17 @@ otros hilos están constantemente realizando actualizaciones. Así es como pasar
 
     \begin{center}
         \includegraphics[width = 8 cm]{Images/Pregunta5_4.png}
-    \end{center}
+    \end{center}\\
+
+Inicialmente el arreglo está en el estado $[\bot, \bot, \bot]$, entonces, la operación \texttt{update(c)} sucede primero, actualizando el valor correspondiente a la posición del hilo $A$. 
+La operación \texttt{scan()} comienza en el hilo $B$ y toma una copia del estado usando el método \texttt{collect()}, después, ocurre una operación \texttt{update(a)} en el hilo $C$. 
+Posteriormente, ocurre una operación \texttt{update(b)} en el hilo $C$ y por último, la operación \texttt{scan()} regresa el valor $V = [\bot, \bot, b]$.
 
     \hfill
     
     \item ¿La implementación seguiría siendo linealizable? Argumenta por qué.
+
+Notemos que la implementación original del método \texttt{scan()} hace múltiples llamadas a \texttt{collect()} hasta que el estado obtenido sea consistente, esto nos garantiza que el valor que regreso \texttt{scan()} muestre un estado consistente de la memoria compartida en algún punto de su ejecución. La implementación modificada de \texttt{scan()} solo hace una única llamada a \texttt{collect()}, es decir, el valor devuelto muestra únicamente el estado en el instante en que se realizó esa única recolección. Además, la ejecución de la Figura 5 nos indica que el valor devuelto por \texttt{scan()} es $V = [\bot, \bot, b]$, es decir, el valor de la posición correspondiente al hilo $B$ fue actualizado después de la llamada a \texttt{collect()}, pero antes de que \texttt{scan()} regresara el resultado.
 
     \hfill
     
