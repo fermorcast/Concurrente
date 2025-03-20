@@ -197,15 +197,20 @@ otros hilos están constantemente realizando actualizaciones. Así es como pasar
         \includegraphics[width = 8 cm]{Images/Pregunta5_4.png}
     \end{center}\\
 
-Inicialmente el arreglo está en el estado $[\bot, \bot, \bot]$, entonces, la operación \texttt{update(c)} sucede primero, actualizando el valor correspondiente a la posición del hilo $A$. 
-La operación \texttt{scan()} comienza en el hilo $B$ y toma una copia del estado usando el método \texttt{collect()}, después, ocurre una operación \texttt{update(a)} en el hilo $C$. 
-Posteriormente, ocurre una operación \texttt{update(b)} en el hilo $C$ y por último, la operación \texttt{scan()} regresa el valor $V = [\bot, \bot, b]$.
+Inicialmente el arreglo está en el estado $[\bot, \bot, \bot]$, entonces, la operación update(c) pasa primero, actualizando el valor correspondiente a la posición del hilo $A$. 
+La operación scan() comienza en el hilo $B$ y toma una copia del estado usando el método collect(), después, pasa una operación update(a) en el hilo $C$. 
+Posteriormente, sucede una operación update(b) en el hilo $C$ y por último, la operación scan() regresa el valor $V = [\bot, \bot, b]$.
+
+Entonces, decimos que la implementación de la Figura 5 si podría suceder con la implementación modificada de scan(), la cual solo hace una llamada a collect(), porque esta implementación permite que el valor devuelto por scan() muestre un estado inconsistente si ocurren actualizaciones concurrentes durante la recolección de valores. Pero, notemos que el hecho de que la ejecución pueda ocurrir no implica que la implementación sea linealizable, de hecho, la implementación modificada no es linealizable porque regresa un estado que no corresponde a un punto único de la ejecución.
 
     \hfill
     
     \item ¿La implementación seguiría siendo linealizable? Argumenta por qué.
 
-Notemos que la implementación original del método \texttt{scan()} hace múltiples llamadas a \texttt{collect()} hasta que el estado obtenido sea consistente, esto nos garantiza que el valor que regreso \texttt{scan()} muestre un estado consistente de la memoria compartida en algún punto de su ejecución. La implementación modificada de \texttt{scan()} solo hace una única llamada a \texttt{collect()}, es decir, el valor devuelto muestra únicamente el estado en el instante en que se realizó esa única recolección. Además, la ejecución de la Figura 5 nos indica que el valor devuelto por \texttt{scan()} es $V = [\bot, \bot, b]$, es decir, el valor de la posición correspondiente al hilo $B$ fue actualizado después de la llamada a \texttt{collect()}, pero antes de que \texttt{scan()} regresara el resultado.
+Notemos que en la implementación original del método scan() hace múltiples llamadas a collect() hasta que el estado obtenido sea consistente, esto nos garantiza que el valor que regreso scan() muestre un estado consistente de la memoria compartida en algún punto de su ejecución. La implementación modificada de scan() solo hace una única llamada a collect(), es decir, el valor devuelto muestra únicamente el estado en el instante en que se realizó esa única recolección. Además, la ejecución de la Figura 5 nos indica que el valor devuelto por scan() es $V = [\bot, \bot, b]$, es decir, el valor de la posición correspondiente al hilo $B$ fue actualizado después de la llamada a collect(), pero antes de que scan() regresara el resultado.
+
+Tomando en cuenta los argumentos anteriores, decimos que la implementación modificada no es linealizable porque la operación scan() regresa un valor que no muestra un estado consistente de la memoria compartida en ningún punto único de su ejecución, recordemos que para que pueda ser linealizable es necesario que toda operación se muestre como si pasará en un punto único en el tiempo entre su inicio y su finalización, entonces, la implementación modificada no nos garantiza esto porque solo hace una única llamada a collect() y no valida la consistencia del estado obtenido.
+Por lo tanto, concluimos que la implementación modificada de scan() no es linealizable.
 
     \hfill
     
