@@ -1,0 +1,64 @@
+\section*{Instrucciones:}
+
+\begin{itemize}
+    \item Entrega en un pdf las respuestas de los ejercicios que no requieran implementarse y añade una breve descripción de los programas que entregas (sus nombres y qué hacen).
+    
+    \item Los programas deben ir un zip. Debes realizar un programa en cada ejercicio que indique “Implemetar”.
+
+    \item Recuerda que debes utilizar Java 21 LTS.
+
+    \item \textbf{Si no compila utilizando Java 21LTS o si no se entrega la breve descripción de los
+    programas se penalizará.}
+\end{itemize}
+
+\textbf{Tiempo de elaboración:} $\approx$ 2 hrs
+
+\textbf{Total de puntos:} 100
+
+\textbf{Importante:} No utilicen en su contador la paquetería Atomic, en general no la utilicen. Cuando utilizan compareAndSet(), get(), getAndIncrement(), etc, están haciendo que todo lo que está adentro de estos métodos se haga de forma atómica. Por ejemplo, si utilizan getAndIncrement() en su contador, este se vuelve linealizable, es decir, con consistencia, siempre contará bien, entonces no tendría caso utilizar candados y ese es el objetivo de esta práctica.
+
+También tengan cuidado con otros objetos de la biblioteca Concurrent de java, muchas de estas implementaciones ya son linealizables, y en esta práctica no las necesitamos. Solo ocupan volatile.
+
+\section*{Ejercicios:}
+
+\begin{enumerate}
+    \item El algoritmo de candado Peterson solo funciona para 2 hilos, utiliza el algoritmo de candado Peterson para implementar un algoritmo de candado que funcione para 4 hilos. Hint: Apóyate del programa Peterson
+
+    \begin{enumerate}
+        \item Para probar que tu candado funciona, crea una implementación en donde utilices un ExecutorService para ejecutar 400 tareas, cada tarea debe aumentar en uno un objeto Contador.
+        
+        Utiliza tu candado para 4 hilos para tener consistencia en tu Contador.
+
+        \item De alguna forma obtén el número de veces que los hilos aumentan el contador. ¿Cada uno realiza exactamente 100 tareas o hay algunos que realizan más?
+
+        \item ¿Consideras que la implementación cumple con Justicia? Justifica tu respuesta.
+    \end{enumerate}
+
+    \textbf{Adventencia:} Puedes considerar el pseudocódigo de la Tarea 3 (DoubleP eterson). Solo ten cuidado con los id’s, ya que si utilizas modulo 2 para Peterson y modulo 4 para DoublePeterson, puede pasar que dos hilos ejecuten un candado Peterson con el mismo id. Si dos hilos en Peterson tienen el mismo id entonces no se cumple exclusión mutua, y el candado DoublePeterson no cumplirá su función, no contará las 400 tareas.
+
+    \hfill
+
+    \item  En base a la implementación de Bakery vista en la clase teoría, implementa Bakery para 4 hilos. \textit{Hint:} Crea los arreglos flag y label de tamaño 4, si consideras necesario utiliza campos volatile
+
+    \begin{enumerate}
+        \item Con ayuda de un ExecutorService ejecuta 400 tareas, cada tarea debe aumentar en uno un objeto Contador. Utiliza tu candado para 4 hilos para tener consistencia en tu Contador.
+
+        \item De alguna forma obtén el número de veces que los hilos aumentan el contador. ¿Cada uno realiza exactamente 100 tareas o hay algunos que realizan más?
+
+        \item ¿Consideras que la implementación cumple con Justicia? Justifica tu respuesta.
+    \end{enumerate}
+
+    \hfill
+
+    \item Revisa el programa de Bakery que se les compartió como ejemplo, ejecútalo varias veces, revisa el código y contesta:
+
+    \begin{enumerate}
+        \item Revisa para que sirve el campo AtomicReference, y qué hacen los métodos compareAndSet() y get().
+
+        \item Describe como funciona en a lo más 6 líneas de computadora.
+
+        \item ¿Si next no es un AtomicReference sigue funcionando? \textit{Hint: Recuerda la Cola concurrente sin candados que implementaste en la Práctica 2}
+
+        \item ¿Consideras que mantiene la lógica de la implementación vista en clase/tu implementación del ejercicio anterior? Justifica porqué.
+    \end{enumerate}
+\end{enumerate}
