@@ -55,10 +55,29 @@ También tengan cuidado con otros objetos de la biblioteca Concurrent de java, m
     \begin{enumerate}
         \item Revisa para que sirve el campo AtomicReference, y qué hacen los métodos compareAndSet() y get().
 
+        Analizando cada elemento por separado:
+
+        \begin{itemize}
+            \item AtomicReference nos sirve para realizar operaciones thread-safe (dentro de Java, son las operaciones que se pueden realizar de forma simultánea por parte de varios hilos sin el caer en corrupción de datos o comportamientos no deseados).
+
+            \item El método compareAndSet() nos es de utilidad ya que nos permite de primeras comparar si el contenido de dos elementos (objetos, nodos, etc.) son iguales, y en caso de serlo lo asigna  (en este caso al nuevo nodo) y nos regresa el valor booleano para darnos la idea de si se hizo la operación o no. 
+
+            \item El método get() en este programa lo utilizamos para obtener el nodo deseado según las instrucciones proporcionadas, siguiendo las propiedades de volatile.\\
+            
+        \end{itemize}
+
+        
+
         \item Describe como funciona en a lo más 6 líneas de computadora.
+        
+        Esencialmente, se crea una instancia de Bakery con nodos head y tail y el CounterNaive es compartido por todos los hilos; por cada operación los hilos inicializan un nodo con flag = true y su ID como item, el hilo mediante lock(node) se añade a la ''cola de espera'', este nodo esperará hasta que sea el primero en la cola de espera y que el nodo anterior cambie a flag = false, el hilo incrementa el contador (sección crítica) y termina cuando flag = false, dando paso al siguiente nodo.\\
 
         \item ¿Si next no es un AtomicReference sigue funcionando? \textit{Hint: Recuerda la Cola concurrente sin candados que implementaste en la Práctica 2}
 
+        Recordando lo visto en la práctica pasada y la función descrita que tiene el campo en si del AtomicReference, podemos decir que next() no funcionaria de la misma manera, lo cual nos llevaría a que tal cual se esta implementando el algoritmo, no sería viable en un entorno concurrente, pudiendo generar fallos en la exclusión mutua, pérdida de nodos, inconsistencias en las listas, etc.\\
+
         \item ¿Consideras que mantiene la lógica de la implementación vista en clase/tu implementación del ejercicio anterior? Justifica porqué.
+
+        
     \end{enumerate}
 \end{enumerate}
