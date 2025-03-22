@@ -24,17 +24,32 @@ También tengan cuidado con otros objetos de la biblioteca Concurrent de java, m
 \begin{enumerate}
     \item El algoritmo de candado Peterson solo funciona para 2 hilos, utiliza el algoritmo de candado Peterson para implementar un algoritmo de candado que funcione para 4 hilos. Hint: Apóyate del programa Peterson
 
+    \textbf{Adventencia:} Puedes considerar el pseudocódigo de la Tarea 3 (DoublePeterson). Solo ten cuidado con los id’s, ya que si utilizas modulo 2 para Peterson y modulo 4 para DoublePeterson, puede pasar que dos hilos ejecuten un candado Peterson con el mismo id. Si dos hilos en Peterson tienen el mismo id entonces no se cumple exclusión mutua, y el candado DoublePeterson no cumplirá su función, no contará las 400 tareas.
+
+
     \begin{enumerate}
         \item Para probar que tu candado funciona, crea una implementación en donde utilices un ExecutorService para ejecutar 400 tareas, cada tarea debe aumentar en uno un objeto Contador.
         
         Utiliza tu candado para 4 hilos para tener consistencia en tu Contador.
 
+        Revisando las ejecuciones:
+
+        \begin{center}
+            \includegraphics[width = 8 cm]{Images/Practica3_01.jpg}
+
+            \includegraphics[width = 8 cm]{Images/Practica3_02.jpg}
+        \end{center}
+
         \item De alguna forma obtén el número de veces que los hilos aumentan el contador. ¿Cada uno realiza exactamente 100 tareas o hay algunos que realizan más?
 
-        \item ¿Consideras que la implementación cumple con Justicia? Justifica tu respuesta.
-    \end{enumerate}
+        NO, ya que idealmente deberia de cada hilo hacer 100 tareas pero al los hilos tener diferentes tiempos de hacer sus tareas y su sincronizacion, hay unos que una vez realizan mas o realizan menos, al igual que puede no cumplirse la mutex, porque no tenemos manera de que la seccion critica solo acceda un solo hilo, pongamos el siguiente ejemplo: digamos que tenemos el hilo 1 y 3 donde cada uno toma su candado, lock1 y lock2 exitosamente y estamos en el paso donde nadie ha tomado el lock 3, entonces si ambos llegan a la validacion al lock3 estar libre ambos pasan y entonces ambos entran a la seccion critica, estos casos son raros pero puede pasar y es por ello que tambien llegamos a ver inconsistencias en las tareas.\\
 
-    \textbf{Adventencia:} Puedes considerar el pseudocódigo de la Tarea 3 (DoubleP eterson). Solo ten cuidado con los id’s, ya que si utilizas modulo 2 para Peterson y modulo 4 para DoublePeterson, puede pasar que dos hilos ejecuten un candado Peterson con el mismo id. Si dos hilos en Peterson tienen el mismo id entonces no se cumple exclusión mutua, y el candado DoublePeterson no cumplirá su función, no contará las 400 tareas.
+
+        \item ¿Consideras que la implementación cumple con Justicia? Justifica tu respuesta.
+
+        No, ya que hay hilos que cumplen mas rápido con sus tareas y hay otros aue tardan mas y no se considera eso, ademas que dependiendo del id real de los hilos pueden todos caer en un modulo similar, pero principalmente porque no se toma en cuenta que un hilo lleve esperando un candado.\\
+        
+    \end{enumerate}
 
     \hfill
 
